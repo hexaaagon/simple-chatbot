@@ -39,6 +39,7 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.37.0",
     "drizzle-zod": "^0.5.1",
+    "framer-motion": "^11.13.4",
     "lucide-react": "^0.468.0",
     "nanoid": "^5.0.9",
     "next": "14.2.20",

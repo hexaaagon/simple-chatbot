@@ -39,6 +39,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import BlurFade from "@/components/ui/blur-fade";
 import { Label } from "@/components/ui/label";
 import { Settings } from "@/components/Settings";
 import Markdown from "react-markdown";
@@ -192,219 +193,233 @@ export default function AIDashboard() {
       <Settings />
       <main className="container mx-auto max-w-2xl p-4">
         <header className="mb-6 pt-6">
-          <h1 className="text-2xl font-bold md:text-3xl">Simple AI Chatbot</h1>
-          <p className="text-xs md:text-sm">
-            Just a simple AI Chatbot for sure. Powered by Cloudflare AI.
-          </p>
+          <BlurFade delay={0.25 * 1} inView>
+            <h1 className="text-2xl font-bold md:text-3xl">
+              Simple AI Chatbot
+            </h1>
+          </BlurFade>
+          <BlurFade delay={0.25 * 2} inView>
+            <p className="text-xs md:text-sm">
+              Just a simple AI Chatbot for sure. Powered by Cloudflare AI.
+            </p>
+          </BlurFade>
         </header>
         <Tabs
           defaultValue={config[0].name.toLowerCase()}
           className="w-full space-y-4"
         >
-          <ScrollArea>
-            <TabsList
-              className="grid w-max min-w-full"
-              style={{
-                gridTemplateColumns: `repeat(${config.length}, minmax(0, 1fr))`,
-              }}
-            >
-              {config.map((model) => (
-                <TabsTrigger
-                  key={model.name}
-                  value={model.name.toLowerCase()}
-                  disabled={loading}
-                  onClick={(e) => {
-                    setResult("");
-                  }}
-                  className="text-xs md:text-sm"
-                >
-                  <model.icon className="mr-2 h-4 w-4" />
-                  {model.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            <ScrollBar className="pt-2" orientation="horizontal" />
-          </ScrollArea>
-          {config.map((model) => (
-            <TabsContent key={model.name} value={model.name.toLowerCase()}>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <model.icon />
-                    {model.name}
-                  </CardTitle>
-                  <CardDescription>{model.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form
-                    onSubmit={(e) => handleSubmit(e, model.name)}
-                    className="space-y-4"
+          <BlurFade delay={0.25 * 3} inView>
+            <ScrollArea>
+              <TabsList
+                className="grid w-max min-w-full"
+                style={{
+                  gridTemplateColumns: `repeat(${config.length}, minmax(0, 1fr))`,
+                }}
+              >
+                {config.map((model) => (
+                  <TabsTrigger
+                    key={model.name}
+                    value={model.name.toLowerCase()}
+                    disabled={loading}
+                    onClick={(e) => {
+                      setResult("");
+                    }}
+                    className="text-xs md:text-sm"
                   >
-                    {model.elements.input === "textarea" && (
-                      <Textarea
-                        className="h-[10vh] max-h-[50vh] text-xs md:text-sm"
-                        value={prompts[model.name]}
-                        onChange={(e) =>
-                          setPrompts((prev) => ({
-                            ...prev,
-                            [model.name]: e.target.value,
-                          }))
-                        }
-                        placeholder={model.elements.placeholder}
-                        disabled={loading}
-                      />
-                    )}
-                    {model.elements.input === "input" && (
-                      <Input
-                        value={prompts[model.name]}
-                        onChange={(e) =>
-                          setPrompts((prev) => ({
-                            ...prev,
-                            [model.name]: e.target.value,
-                          }))
-                        }
-                        placeholder={model.elements.placeholder}
-                        disabled={loading}
-                      />
-                    )}
-                    {(model.advanced || []).length > 0 && (
-                      <Collapsible>
-                        <CollapsibleTrigger asChild>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            className="flex items-center gap-2"
-                          >
-                            <ChevronsUpDown size={12} />
-                            View advanced
-                          </Button>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="pt-4">
-                          {(model.advanced || []).map((advanced) => (
-                            <div
-                              key={advanced.value}
-                              className="flex flex-col gap-2"
-                            >
-                              <Label>{advanced.label}</Label>
-                              {advanced.type === "checkbox" && (
-                                <Checkbox
-                                  checked={
-                                    params.find(
-                                      (param) =>
-                                        param.name === advanced.value &&
-                                        param.value === "true",
-                                    )
-                                      ? true
-                                      : false
-                                  }
-                                  onChange={() =>
-                                    addParams(advanced.value, "true")
-                                  }
-                                  disabled={loading}
-                                />
-                              )}
-                              {advanced.type === "input" && (
-                                <Input
-                                  value={
-                                    params.find(
-                                      (param) => param.name === advanced.value,
-                                    )?.value ||
-                                    advanced.defaultValue ||
-                                    ""
-                                  }
-                                  onChange={(e) =>
-                                    addParams(advanced.value, e.target.value)
-                                  }
-                                  disabled={loading}
-                                />
-                              )}
-                              {advanced.type === "textarea" && (
-                                <Textarea
-                                  value={
-                                    params.find(
-                                      (param) => param.name === advanced.value,
-                                    )?.value ||
-                                    advanced.defaultValue ||
-                                    ""
-                                  }
-                                  onChange={(e) =>
-                                    addParams(advanced.value, e.target.value)
-                                  }
-                                  disabled={loading}
-                                />
-                              )}
-                              {advanced.type === "select" && (
-                                <Select
-                                  value={
-                                    params.find(
-                                      (param) => param.name === advanced.value,
-                                    )
-                                      ? params.find(
-                                          (param) =>
-                                            param.name === advanced.value,
-                                        )?.value
-                                      : advanced.defaultValue
-                                  }
-                                  onValueChange={(value) =>
-                                    addParams(advanced.value, value)
-                                  }
-                                  disabled={loading}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue
-                                      placeholder={
-                                        advanced.defaultValue ?? "Default"
-                                      }
-                                    />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {advanced.options.map((option) => (
-                                      <SelectItem
-                                        key={option.value}
-                                        value={option.value}
-                                        onClick={() =>
-                                          addParams(
-                                            advanced.value,
-                                            option.value,
-                                          )
-                                        }
-                                      >
-                                        {option.label}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            </div>
-                          ))}
-                        </CollapsibleContent>
-                      </Collapsible>
-                    )}
+                    <model.icon className="mr-2 h-4 w-4" />
+                    {model.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              <ScrollBar className="pt-2" orientation="horizontal" />
+            </ScrollArea>
+          </BlurFade>
 
-                    <Button
-                      type="submit"
-                      className="flex items-center gap-2"
-                      disabled={loading}
+          <BlurFade delay={0.25 * 4} inView>
+            {config.map((model) => (
+              <TabsContent key={model.name} value={model.name.toLowerCase()}>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <model.icon />
+                      {model.name}
+                    </CardTitle>
+                    <CardDescription>{model.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form
+                      onSubmit={(e) => handleSubmit(e, model.name)}
+                      className="space-y-4"
                     >
-                      <Sparkles />
-                      {loading
-                        ? model.elements.loadingSubmit
-                        : model.elements.submit}
-                    </Button>
-                  </form>
-                  {result !== "" && (
-                    <div className="mt-4 flex flex-col gap-2 rounded-md bg-secondary p-4">
-                      <span>
-                        <h3 className="font-semibold leading-4">Response:</h3>
-                        <p className="text-xs">{completedTime}ms</p>
-                      </span>
-                      <Markdown className="flex flex-col text-justify text-sm">{`${result}`}</Markdown>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          ))}
+                      {model.elements.input === "textarea" && (
+                        <Textarea
+                          className="h-[10vh] max-h-[50vh] text-xs md:text-sm"
+                          value={prompts[model.name]}
+                          onChange={(e) =>
+                            setPrompts((prev) => ({
+                              ...prev,
+                              [model.name]: e.target.value,
+                            }))
+                          }
+                          placeholder={model.elements.placeholder}
+                          disabled={loading}
+                        />
+                      )}
+                      {model.elements.input === "input" && (
+                        <Input
+                          value={prompts[model.name]}
+                          onChange={(e) =>
+                            setPrompts((prev) => ({
+                              ...prev,
+                              [model.name]: e.target.value,
+                            }))
+                          }
+                          placeholder={model.elements.placeholder}
+                          disabled={loading}
+                        />
+                      )}
+                      {(model.advanced || []).length > 0 && (
+                        <Collapsible>
+                          <CollapsibleTrigger asChild>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="flex items-center gap-2"
+                            >
+                              <ChevronsUpDown size={12} />
+                              View advanced
+                            </Button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="pt-4">
+                            {(model.advanced || []).map((advanced) => (
+                              <div
+                                key={advanced.value}
+                                className="flex flex-col gap-2"
+                              >
+                                <Label>{advanced.label}</Label>
+                                {advanced.type === "checkbox" && (
+                                  <Checkbox
+                                    checked={
+                                      params.find(
+                                        (param) =>
+                                          param.name === advanced.value &&
+                                          param.value === "true",
+                                      )
+                                        ? true
+                                        : false
+                                    }
+                                    onChange={() =>
+                                      addParams(advanced.value, "true")
+                                    }
+                                    disabled={loading}
+                                  />
+                                )}
+                                {advanced.type === "input" && (
+                                  <Input
+                                    value={
+                                      params.find(
+                                        (param) =>
+                                          param.name === advanced.value,
+                                      )?.value ||
+                                      advanced.defaultValue ||
+                                      ""
+                                    }
+                                    onChange={(e) =>
+                                      addParams(advanced.value, e.target.value)
+                                    }
+                                    disabled={loading}
+                                  />
+                                )}
+                                {advanced.type === "textarea" && (
+                                  <Textarea
+                                    value={
+                                      params.find(
+                                        (param) =>
+                                          param.name === advanced.value,
+                                      )?.value ||
+                                      advanced.defaultValue ||
+                                      ""
+                                    }
+                                    onChange={(e) =>
+                                      addParams(advanced.value, e.target.value)
+                                    }
+                                    disabled={loading}
+                                  />
+                                )}
+                                {advanced.type === "select" && (
+                                  <Select
+                                    value={
+                                      params.find(
+                                        (param) =>
+                                          param.name === advanced.value,
+                                      )
+                                        ? params.find(
+                                            (param) =>
+                                              param.name === advanced.value,
+                                          )?.value
+                                        : advanced.defaultValue
+                                    }
+                                    onValueChange={(value) =>
+                                      addParams(advanced.value, value)
+                                    }
+                                    disabled={loading}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue
+                                        placeholder={
+                                          advanced.defaultValue ?? "Default"
+                                        }
+                                      />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {advanced.options.map((option) => (
+                                        <SelectItem
+                                          key={option.value}
+                                          value={option.value}
+                                          onClick={() =>
+                                            addParams(
+                                              advanced.value,
+                                              option.value,
+                                            )
+                                          }
+                                        >
+                                          {option.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                )}
+                              </div>
+                            ))}
+                          </CollapsibleContent>
+                        </Collapsible>
+                      )}
+
+                      <Button
+                        type="submit"
+                        className="flex items-center gap-2"
+                        disabled={loading}
+                      >
+                        <Sparkles />
+                        {loading
+                          ? model.elements.loadingSubmit
+                          : model.elements.submit}
+                      </Button>
+                    </form>
+                    {result !== "" && (
+                      <div className="mt-4 flex flex-col gap-2 rounded-md bg-secondary p-4">
+                        <span>
+                          <h3 className="font-semibold leading-4">Response:</h3>
+                          <p className="text-xs">{completedTime}ms</p>
+                        </span>
+                        <Markdown className="flex flex-col text-justify text-sm">{`${result}`}</Markdown>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            ))}
+          </BlurFade>
         </Tabs>
       </main>
     </>
