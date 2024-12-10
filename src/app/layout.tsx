@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import ThemeProvider from "@/components/ThemeProvider";
+import TrpcProvider from "@/lib/trpc/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +23,9 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
-        <ThemeProvider>{children}</ThemeProvider>
+        <TrpcProvider cookies={cookieStore.toString()}>
+          <ThemeProvider>{children}</ThemeProvider>
+        </TrpcProvider>
       </body>
     </html>
   );
