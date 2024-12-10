@@ -1,5 +1,5 @@
 import { publicProcedure, router } from "@/lib/server/trpc";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 import { z } from "zod";
 
 export const chatRouter = router({
@@ -10,10 +10,10 @@ export const chatRouter = router({
         model: z
           .custom<BaseAiTextGenerationModels>()
           .default("@cf/meta/llama-3-8b-instruct"),
-      })
+      }),
     )
     .query(async (opts) => {
-      const env = (await getCloudflareContext()).env;
+      const env = (await getRequestContext()).env;
 
       return await env.AI.run(opts.input.model, {
         prompt: opts.input.input,

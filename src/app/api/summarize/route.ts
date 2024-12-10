@@ -1,4 +1,4 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       },
     );
 
-  const ctx = await getCloudflareContext();
+  const ctx = await getRequestContext();
   const result = await ctx.env.AI.run("@cf/facebook/bart-large-cnn", {
     input_text: body.prompt,
   });
