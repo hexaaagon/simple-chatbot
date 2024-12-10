@@ -13,3 +13,6 @@ assets = { directory = ".worker-next/assets", binding = "ASSETS" }
 
 [ai]
 binding = "AI"
+
+[observability.logs]
+enabled = true
