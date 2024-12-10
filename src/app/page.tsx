@@ -1,6 +1,5 @@
 "use client";
 
-import useSWR from "swr";
 import React, {
   ForwardRefExoticComponent,
   RefAttributes,
@@ -10,6 +9,7 @@ import React, {
 import {
   type LucideProps,
   Bot,
+  Text,
   Image,
   Sparkles,
   ChevronsUpDown,
@@ -43,7 +43,6 @@ import { Label } from "@/components/ui/label";
 import { Settings } from "@/components/Settings";
 import Markdown from "react-markdown";
 
-import { useTheme } from "next-themes";
 import { Chat } from "@/constants/Models";
 
 const config: Array<{
@@ -107,7 +106,7 @@ const config: Array<{
   {
     name: "Summarize",
     description: "Summarize your long long text into a short summary",
-    icon: Bot,
+    icon: Text,
     route: "/api/summarize",
     elements: {
       input: "textarea",
@@ -192,7 +191,12 @@ export default function AIDashboard() {
     <>
       <Settings />
       <main className="container mx-auto max-w-2xl p-4">
-        <h1 className="mb-6 pt-4 text-3xl font-bold">Cloudflare AI</h1>
+        <header className="mb-6 pt-6">
+          <h1 className="text-2xl font-bold md:text-3xl">Simple AI Chatbot</h1>
+          <p className="text-xs md:text-sm">
+            Just a simple AI Chatbot for sure. Powered by Cloudflare AI.
+          </p>
+        </header>
         <Tabs
           defaultValue={config[0].name.toLowerCase()}
           className="w-full space-y-4"
@@ -267,7 +271,7 @@ export default function AIDashboard() {
                       <Collapsible>
                         <CollapsibleTrigger asChild>
                           <Button
-                            variant="ghost"
+                            variant="secondary"
                             size="sm"
                             className="flex items-center gap-2"
                           >
@@ -389,8 +393,11 @@ export default function AIDashboard() {
                     </Button>
                   </form>
                   {result !== "" && (
-                    <div className="mt-4 rounded-md bg-secondary p-4">
-                      <h3 className="mb-2 font-semibold">Response:</h3>
+                    <div className="mt-4 flex flex-col gap-2 rounded-md bg-secondary p-4">
+                      <span>
+                        <h3 className="font-semibold leading-4">Response:</h3>
+                        <p className="text-xs">{completedTime}ms</p>
+                      </span>
                       <Markdown className="flex flex-col text-justify text-sm">{`${result}`}</Markdown>
                     </div>
                   )}
