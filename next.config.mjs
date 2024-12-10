@@ -6,7 +6,6 @@ const nextConfig = {
     config.externals.push("@node-rs/argon2", "@node-rs/bcrypt");
     return config;
   },
-  transpilePackages: ["@vercel/otel"],
 };
 
 export default nextConfig;

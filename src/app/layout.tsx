@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import ThemeProvider from "@/components/ThemeProvider";
-import TrpcProvider from "@/lib/trpc/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,19 +12,15 @@ export const metadata: Metadata = {
   description: "Simple AI Chatbot for sure.",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
-        <TrpcProvider cookies={cookieStore.toString()}>
-          <ThemeProvider>{children}</ThemeProvider>
-        </TrpcProvider>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

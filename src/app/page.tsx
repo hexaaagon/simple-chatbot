@@ -102,6 +102,12 @@ const config: Array<{
         defaultValue: "@cf/meta/llama-3-8b-instruct",
         options: Chat.map((chat) => ({ label: chat, value: chat })),
       },
+      {
+        label: "What the AI should know?",
+        value: "chat-ai-context",
+        type: "textarea",
+        defaultValue: "You are a helpful assistant.",
+      },
     ],
   },
   {
@@ -162,29 +168,43 @@ export default function AIDashboard() {
     const start = Date.now();
     console.log(`${modelName} prompt submitted:`, prompts[modelName]);
 
-    const response = (await (
-      await fetch(config.find((c) => c.name === modelName)!.route, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          prompt: prompts[modelName],
-          params: params.map((param) => ({
-            name: param.name,
-            value: param.value,
-          })),
-        }),
-      })
-    ).json()) as {
-      result: string;
-    };
+    if (modelName === "Chat") {
+      const response = (await (
+        await fetch(config.find((c) => c.name === modelName)!.route, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompt: prompts[modelName],
+          }),
+        })
+      ).json()) as {
+        result: string;
+      };
 
-    console.log(response.result);
+      setResult(response.result);
+    } else if (modelName === "Summarize") {
+      const response = (await (
+        await fetch(config.find((c) => c.name === modelName)!.route, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompt: prompts[modelName],
+          }),
+        })
+      ).json()) as {
+        result: string;
+      };
+
+      setResult(response.result);
+    }
+
     const end = Date.now();
 
     setCompletedTime(end - start);
-    setResult(response.result);
     setLoading(false);
   };
 
@@ -290,13 +310,15 @@ export default function AIDashboard() {
                               View advanced
                             </Button>
                           </CollapsibleTrigger>
-                          <CollapsibleContent className="pt-4">
+                          <CollapsibleContent className="flex flex-col gap-4 pt-4">
                             {(model.advanced || []).map((advanced) => (
                               <div
                                 key={advanced.value}
                                 className="flex flex-col gap-2"
                               >
-                                <Label>{advanced.label}</Label>
+                                <Label className="leading-3">
+                                  {advanced.label}
+                                </Label>
                                 {advanced.type === "checkbox" && (
                                   <Checkbox
                                     checked={
@@ -320,8 +342,8 @@ export default function AIDashboard() {
                                       params.find(
                                         (param) =>
                                           param.name === advanced.value,
-                                      )?.value ||
-                                      advanced.defaultValue ||
+                                      )?.value ??
+                                      advanced.defaultValue ??
                                       ""
                                     }
                                     onChange={(e) =>
@@ -336,8 +358,8 @@ export default function AIDashboard() {
                                       params.find(
                                         (param) =>
                                           param.name === advanced.value,
-                                      )?.value ||
-                                      advanced.defaultValue ||
+                                      )?.value ??
+                                      advanced.defaultValue ??
                                       ""
                                     }
                                     onChange={(e) =>

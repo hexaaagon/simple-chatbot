@@ -21,6 +21,15 @@ export async function POST(req: NextRequest) {
       },
     );
 
+  const knowledge: string[] = [
+    `Right now, the date and time is: "${new Date().toLocaleString("en-US", { timeZone: "UTC" })}" (UTC+0).`,
+    `Your AI Model name is ${
+      (body.params?.find((data) => data.name === "chat-ai-model")
+        ?.value as BaseAiTextGenerationModels) ?? "@cf/meta/llama-3-8b-instruct"
+    }`,
+    "In the 'Strawberry' word, there is only 3 *R*. Here's the proof: st*r*awbe*r**r*y",
+  ];
+
   const ctx = await getCloudflareContext();
   const result = (await ctx.env.AI.run(
     (body.params?.find((data) => data.name === "chat-ai-model")
@@ -29,15 +38,13 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant.",
+          content:
+            body.params?.find((data) => data.name === "chat-ai-context")
+              ?.value ?? "You are a helpful assistant.",
         },
         {
           role: "assistant",
-          content: `Right now, the date and time is: "${new Date().toLocaleString("en-US", { timeZone: "UTC" })}" (UTC+0). Your AI Model is ${
-            (body.params?.find((data) => data.name === "chat-ai-model")
-              ?.value as BaseAiTextGenerationModels) ??
-            "@cf/meta/llama-3-8b-instruct"
-          }`,
+          content: knowledge.join("\n"),
         },
         {
           role: "user",
