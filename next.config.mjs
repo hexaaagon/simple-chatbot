@@ -1,11 +1,12 @@
-import { NextConfig } from "next";
+// @ts-check
 
+/** @type {import("next").NextConfig} */
 const nextConfig = {
   webpack: (config) => {
     config.externals.push("@node-rs/argon2", "@node-rs/bcrypt");
     return config;
   },
-  serverExternalPackages: ["@vercel/otel"],
-} satisfies NextConfig;
+  transpilePackages: ["@vercel/otel"],
+};
 
 export default nextConfig;
