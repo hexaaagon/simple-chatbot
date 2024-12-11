@@ -32,7 +32,9 @@ jobs:
         with:
           node-version: 20
           cache: "pnpm"
-      - name: Build & Deploy Worker
+      - name: Build
+        run: pnpm run wrangler:build
+      - name: Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
