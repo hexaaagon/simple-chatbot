@@ -1,7 +1,7 @@
 <div align="center">
   <div>
     <a href="https://github.com/hexaaagon/lophura" target="_blank" rel="noopener">
-      <img style="object-fit: cover;" align="center" width="100%" src=".github/images/readme.png" alt="Simple AI Chatbot - Manage your files with ease." />
+      <img style="object-fit: cover;" align="center" width="100%" src="https://github.com/hexaaagon/simple-chatbot/blob/main/.github/images/readme.png?raw=true" alt="Simple AI Chatbot - Manage your files with ease." />
     </a>
   </div>
   <br />
@@ -14,10 +14,10 @@
 
 <br />
 
-## Information
+## 💁‍♂️ Information
 
 Just a Simple AI Chatbot. yet.
 
-## Demo
+## 🚀 Demo
 
 https://simple-chatbot.scb-b72.workers.dev/
