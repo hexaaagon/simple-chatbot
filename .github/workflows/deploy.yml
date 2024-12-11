@@ -5,6 +5,7 @@ on:
       - main
   pull_request:
   repository_dispatch:
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest
