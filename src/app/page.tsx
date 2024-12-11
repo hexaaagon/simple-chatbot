@@ -122,20 +122,19 @@ const config: Array<{
       loadingSubmit: "Generating...",
     },
   },
-  // TODO
-  // {
-  //   name: "Image Generation",
-  //   description:
-  //     "Generate AI image where the limit is your imagination (and Cloudflare AI billing)",
-  //   icon: Image,
-  //   route: "/api/image",
-  //   elements: {
-  //     input: "textarea",
-  //     placeholder: "Describe your image...",
-  //     submit: "Generate",
-  //     loadingSubmit: "Generating...",
-  //   },
-  // },
+  {
+    name: "Image Generation",
+    description:
+      "Generate AI image where the limit is your imagination (and Cloudflare AI billing)",
+    icon: Image,
+    route: "/api/image",
+    elements: {
+      input: "textarea",
+      placeholder: "Describe your image...",
+      submit: "Generate",
+      loadingSubmit: "Generating...",
+    },
+  },
 ];
 
 export default function AIDashboard() {
@@ -179,11 +178,9 @@ export default function AIDashboard() {
             prompt: prompts[modelName],
           }),
         })
-      ).json()) as {
-        result: string;
-      };
+      ).json()) as string;
 
-      setResult(response.result);
+      setResult(response);
     } else if (modelName === "Summarize") {
       const response = (await (
         await fetch(config.find((c) => c.name === modelName)!.route, {
@@ -193,6 +190,23 @@ export default function AIDashboard() {
           },
           body: JSON.stringify({
             prompt: prompts[modelName],
+          }),
+        })
+      ).json()) as {
+        result: string;
+      };
+
+      setResult(response.result);
+    } else if (modelName === "Image Generation") {
+      const response = (await (
+        await fetch(config.find((c) => c.name === modelName)!.route, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompt: prompts[modelName],
+            params,
           }),
         })
       ).json()) as {
