@@ -4,12 +4,31 @@ on:
   pull_request:
   repository_dispatch:
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm run typecheck
+      - name: Linting
+        run: pnpm run lint
+      - name: Build
+        run: pnpm run build
+
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     needs: test
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Build & Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
