@@ -1,9 +1,10 @@
 import { NextRequest } from "next/server";
 import { createClient } from "./lib/supabase/middleware";
 
-export function middleware(req: NextRequest) {
-  return createClient(req);
-}
+// right now, supabase isn't required.
+// export function middleware(req: NextRequest) {
+//   return createClient(req);
+// }
 
 export const config = {
   matcher:
